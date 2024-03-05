@@ -2,9 +2,10 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Flight Destination Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
   <meta name="description" content="Memory test website for CAL flight destinations">
   <link rel="stylesheet" href="styles.css">
+  <title>Flight Destination Quiz</title>
 </head>
 <body>
   <div id="selectpage" >
@@ -68,7 +69,7 @@
   <div class="container" id="quiz">
     <h1>Flight Destination Quiz</h1>    
     <p id="question"></p>
-    <input type="text" id="answer" placeholder="Enter IATA code">    
+    <input type="text" id="answer" placeholder="Enter IATA code" autocapitalize="characters">    
     <button id="quizSubmit" onclick="checkAnswer()">Answer</button>
     <p id="result"></p>
   </div>
