@@ -19,9 +19,14 @@ body {
     color: #333;
   }
   
+  
   table {
     width: 100%;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
     border-collapse: collapse;
+    height:100vh;
   }
   
   th, td {
@@ -34,13 +39,14 @@ body {
     background-color: #f2f2f2;
   }
   
-  input[type="number"], input[type="text"], select {
-    padding: 10px;
-    width: 100%;
-    margin-bottom: 10px;
-    border-radius: 5px;
+  input[type="number"], input[type="text"], input[type="number"], select {
+    padding: 12px;
+    margin: 8px 4px;
     border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
   }
+  
   
   button {
     padding: 10px 20px;
