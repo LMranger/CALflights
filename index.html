@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Flight Destination Quiz</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="selectpage" >
+    <p class="indented">
+      <input type="button" value="Flights Table" onclick="toggleTable()"></button>
+      <input type="button" value="Setting" id="btn_quizsetting" onclick="toggleQuizSetting()"></button>
+      <input type="button" value="Flight Quiz" onclick="TestStart()"></button>
+      <input type="button" value="Airport Quiz" onclick="TestAirportStart()"></button>
+    </p>
+  </div>
+
+  <div id="flightTable" class="container" style="display: none;">
+    <h2>Flight Information</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Flight Pair Number</th>
+          <th>Flight Pair IATA</th>
+          <th>Flight Pair (ZH-TW)</th>
+          <th>Destination Continent</th>
+          <th>Destination Country</th>
+          <th>Destination Airport Region</th>
+          <th>Destination Continent (ZH-TW)</th>
+          <th>Destination Country (ZH-TW)</th>
+          <th>Destination Airport Region (ZH-TW)</th>
+          <th>Destination IATA</th>
+          <th>Destination ICAO</th>
+          <th>Homebase IATA</th>
+          <th>Homebase ICAO</th>
+        </tr>
+      </thead>
+      <tbody id="flightTableBody">
+        <!-- Flight data will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+  
+
+  <div id="quizSetting" class="container" style="display:block">
+    <h2>Quiz Setting</h2>
+    <p>
+      <label>Number of test?</label>
+      <input type="number" id="numTest" value="10" inputmode="numeric">
+      
+    </p>
+    <p style="display: none;">
+      <label>Answer what?</label>
+      <select id="testType">
+        <option value="destination_IATA">IATA</option>
+        <option value="option2">ICAO(TEST)</option>
+        <option value="option3">TEST</option>
+        <!-- 可以添加更多的选项 -->
+      </select>
+    </p>
+    <p>
+      <label>Pass bar?</label>
+      <input type="number" id="numTest" value="80">
+    </p>    
+  </div>
+
+  <div class="container" id="quiz">
+    <h1>Flight Destination Quiz</h1>    
+    <p id="question"></p>
+    <input type="text" id="answer" placeholder="Enter IATA code">    
+    <button id="quizSubmit" onclick="checkAnswer()">Answer</button>
+    <p id="result"></p>
+  </div>
+
+  <p id="debug"></p>
+
+  <script>
+    let flightData;
+    var correctAnswers = 0;
+    let totalQuestions = 0;
+    var numberOFtest = 5;   
+    let currentQuestion = 0;
+    let idx = [];let id = 0;
+    
+    fetch('flights.json')
+      .then(response => response.json())
+      .then(data => {
+        flightData = data;
+        totalQuestions = flightData.flights.length;
+
+        //--table--
+        const flights = data.flights;
+        const tableBody = document.getElementById('flightTableBody');
+
+        // Iterate through each flight and create table rows
+        flights.forEach(flight => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${flight.flight_pair_number}</td>
+            <td>${flight.flight_pair_IATA}</td>
+            <td>${flight.flight_pair_ZHTW}</td>
+            <td>${flight.destination_continent}</td>
+            <td>${flight.destination_country}</td>
+            <td>${flight.destination_airport_region}</td>
+            <td>${flight.destination_continent_ZHTW}</td>
+            <td>${flight.destination_country_ZHTW}</td>
+            <td>${flight.destinaion_airport_region_ZHTW}</td>
+            <td>${flight.destination_IATA}</td>
+            <td>${flight.destination_ICAO}</td>
+            <td>${flight.homebase_IATA}</td>
+            <td>${flight.homebase_ICAO}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+
+      })
+      .catch(error => console.error('Error fetching flight data:', error));
+
+
+    //--------------------
+
+    function toggleTable() {
+      var flightTable = document.getElementById("flightTable");
+      if (flightTable.style.display === "none") {
+        flightTable.style.display = "block";
+      } else {
+        flightTable.style.display = "none";
+      }
+    }
+
+    function toggleQuizSetting() {
+      var flightTable = document.getElementById("quizSetting");
+      if (flightTable.style.display === "none") {
+        flightTable.style.display = "block";
+      } else {
+        flightTable.style.display = "none";
+      }
+    }
+
+    function shuffle(array) {
+      for (let i = 0; i < totalQuestions; i++) {
+        array.push(i);      
+      }  
+      for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    //--flightPair--
+    function TestStart() {
+      numberOFtest = document.getElementById('numTest').value;
+      document.getElementById('selectpage').style.display = "none";
+      document.getElementById('flightTable').style.display = "none";
+      document.getElementById('quizSetting').style.display = "none";      
+      //document.getElementById('quiz').style.display = "";
+
+      shuffle(idx);
+      correctAnswers = 0;
+      id = 0;
+      currentQuestion = idx[id];
+      document.getElementById('result').textContent = "";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const flight = flightData.flights[currentQuestion];
+      const question = (id+1) + `. What is the destination IATA code for ${flight.flight_pair_number}?`;
+      document.getElementById('question').textContent = question;
+    }
+
+    //--Airport--
+    function TestAirportStart() {
+      numberOFtest = document.getElementById('numTest').value;
+      document.getElementById('selectpage').style.display = "none";
+      document.getElementById('flightTable').style.display = "none";
+      document.getElementById('quizSetting').style.display = "none";      
+      //document.getElementById('quiz').style.display = "";
+
+      shuffle(idx);
+      correctAnswers = 0;
+      id = 0;
+      currentQuestion = idx[id];
+      document.getElementById('result').textContent = "";
+      showQuestion();
+    }
+
+    function showAirportQuestion() {
+      const flight = flightData.flights[currentQuestion];
+      const question = (id+1) + `. What is the destination IATA code for ${flight.destination_airport_region_ZHTW}?`;
+      document.getElementById('question').textContent = question;
+    }
+
+    function checkAnswer() {
+      const flight = flightData.flights[currentQuestion];
+      const answer = document.getElementById('answer').value.toUpperCase();
+      const correctAnswer = flight.destination_IATA;
+      const resultElement = document.getElementById('result');
+
+      if (answer === correctAnswer) {
+        resultElement.textContent = `Correct! ${correctAnswer}.`;
+        resultElement.style.color = 'green';
+        correctAnswers++;
+      } else {
+        resultElement.textContent = `Wrong! The correct answer is ${correctAnswer}.`;
+        resultElement.style.color = 'red';
+      }
+
+      //currentQuestion++;
+      id++;
+      currentQuestion = idx[id];
+      if (id < numberOFtest) {
+      //if (currentQuestion < flightData.flights.length) {
+        showQuestion();
+      } else {
+        document.getElementById('selectpage').style.display = "block";
+        const accuracyRate = (correctAnswers / numberOFtest * 100).toFixed(2);
+        if (accuracyRate >= 80) {
+          resultElement.style.color = 'green';
+        } else {
+          resultElement.style.color = 'red';
+        }
+        resultElement.textContent = `Quiz completed! Your accuracy rate is ${accuracyRate}%.`;
+      }
+      document.getElementById('answer').value = '';
+    }
+
+    document.getElementById('answer').addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') {
+        checkAnswer();
+      }
+    });
+  </script>
+</body>
+</html>
