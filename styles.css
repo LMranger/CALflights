@@ -72,5 +72,8 @@ body {
   
   .indented {
     text-indent: 20px;
+    display: block;
     overflow-x: auto;
+    white-space: nowrap;
+    border-collapse: collapse;
   }
